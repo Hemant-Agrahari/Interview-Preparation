@@ -1,0 +1,922 @@
+1.What is Promise?
+Ans. A Promise is a JavaScript object that represents the eventual completion (or failure) of an asynchronous operation and its resulting value. It's a proxy for a value that will eventually become available.
+
+Key Characteristics:
+- Promise has three states: Pending, Fulfilled (Resolved), and Rejected
+- Once a Promise is settled (fulfilled or rejected), it cannot change its state
+- Promises are immutable - once resolved/rejected, they maintain that state
+- They help avoid "callback hell" and provide better error handling
+- Promises are part of the ES6 (ES2015) specification
+
+Promise States:
+1. Pending: Initial state, neither fulfilled nor rejected
+2. Fulfilled: Operation completed successfully with a result value
+3. Rejected: Operation failed with a reason/error
+
+Promise Lifecycle:
+Promise → Pending → Fulfilled (with value) OR Rejected (with reason)
+
+In simple words, it's a way to handle asynchronous operations in JavaScript with better control flow and error handling than traditional callbacks.
+
+2.How to create a Promise?
+Ans. We can create a Promise using the Promise constructor.
+const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        resolve("Promise resolved");
+    }, 1000);
+});
+
+3.How to use a Promise?
+Ans. Promises can be used in multiple ways to handle asynchronous operations effectively.
+
+Method 1: Using .then() method (Basic Usage)
+promise.then((result) => {
+    console.log(result);
+});
+
+Method 2: Using .then() with both success and error handlers
+promise.then(
+    (result) => {
+        console.log("Success:", result);
+        return result.toUpperCase(); // Can return values for chaining
+    },
+    (error) => {
+        console.error("Error:", error);
+    }
+);
+
+Method 3: Using .then() and .catch() separately (Recommended)
+promise
+    .then((result) => {
+        console.log("Success:", result);
+        return result; // Return for chaining
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
+    .finally(() => {
+        console.log("Operation completed");
+    });
+
+Method 4: Promise Chaining (Multiple operations)
+promise
+    .then((result) => {
+        console.log("Step 1:", result);
+        return fetch(`/api/data/${result}`); // Return another promise
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log("Step 2:", data);
+        return data.processed;
+    })
+    .catch((error) => {
+        console.error("Any step failed:", error);
+    });
+
+Key Points:
+- .then() always returns a new Promise
+- You can chain multiple .then() calls
+- .catch() catches errors from any previous step in the chain
+- .finally() runs regardless of success or failure
+- Return values from .then() become the input for the next .then()
+
+4.How to handle a Promise?
+Ans. Promise handling involves managing different outcomes and states of asynchronous operations.
+
+Error Handling Methods:
+Method 1: Using .catch() (Most Common)
+promise.catch((error) => {
+    console.error("Error occurred:", error);
+    // Handle error appropriately
+    throw new Error(`Custom error: ${error.message}`);
+});
+
+Method 2: Using .then() with error handler
+promise.then(
+    (result) => console.log("Success:", result),
+    (error) => console.error("Error:", error)
+);
+
+Method 3: Global error handling
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    event.preventDefault();
+});
+
+5.How to handle a Promise error?
+Ans. Comprehensive error handling strategies for Promises.
+
+Error Handling Best Practices:
+// 1. Specific error types
+promise.catch((error) => {
+    if (error instanceof TypeError) {
+        console.error("Type error:", error);
+    } else if (error instanceof NetworkError) {
+        console.error("Network error:", error);
+    } else {
+        console.error("Unknown error:", error);
+    }
+});
+
+// 2. Error recovery
+promise
+    .catch((error) => {
+        console.error("Primary operation failed:", error);
+        return fallbackOperation(); // Return fallback promise
+    })
+    .then((result) => console.log("Recovery successful:", result));
+
+// 3. Error logging and monitoring
+promise.catch((error) => {
+    console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
+    });
+    // Send to error monitoring service
+    errorReportingService.log(error);
+});
+
+6.How to handle a Promise success?
+Ans. Effective success handling patterns for Promises.
+
+Success Handling Patterns:
+// 1. Data transformation
+promise.then((result) => {
+    const transformedData = result.map(item => ({
+        id: item.id,
+        name: item.name.toUpperCase(),
+        processed: true
+    }));
+    return transformedData;
+});
+
+// 2. Conditional processing
+promise.then((result) => {
+    if (result.status === 'success') {
+        return processSuccessData(result.data);
+    } else {
+        throw new Error('Unexpected status');
+    }
+});
+
+// 3. Multiple success handlers
+promise
+    .then((result) => {
+        console.log("Step 1:", result);
+        return result.data;
+    })
+    .then((data) => {
+        console.log("Step 2:", data);
+        return data.filter(item => item.active);
+    })
+    .then((activeItems) => {
+        console.log("Final result:", activeItems);
+    });
+
+7.How to handle a Promise finally?
+Ans. The .finally() method executes regardless of Promise outcome.
+
+finally() Use Cases:
+// 1. Cleanup operations
+promise
+    .then((result) => {
+        console.log("Success:", result);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
+    .finally(() => {
+        // Always execute cleanup
+        cleanup();
+        console.log("Operation completed");
+    });
+
+// 2. Loading state management
+let isLoading = true;
+promise
+    .then((result) => {
+        console.log("Data loaded:", result);
+    })
+    .catch((error) => {
+        console.error("Failed to load:", error);
+    })
+    .finally(() => {
+        isLoading = false; // Always reset loading state
+        hideSpinner();
+    });
+
+// 3. Resource cleanup
+const connection = createConnection();
+promise
+    .then((result) => {
+        console.log("Operation successful:", result);
+    })
+    .finally(() => {
+        connection.close(); // Always close connection
+    });
+
+8.How to handle a Promise all?
+Ans. Promise.all() waits for all promises to resolve or any to reject.
+
+Promise.all() Characteristics:
+- Returns array of results when all promises resolve
+- Fails fast - rejects if any promise rejects
+- Maintains order of results
+- Useful for parallel operations that all must succeed
+
+// Example 1: Parallel API calls
+const userPromise = fetch('/api/user/1');
+const postsPromise = fetch('/api/posts?userId=1');
+const commentsPromise = fetch('/api/comments?userId=1');
+
+Promise.all([userPromise, postsPromise, commentsPromise])
+    .then(([userResponse, postsResponse, commentsResponse]) => {
+        return Promise.all([
+            userResponse.json(),
+            postsResponse.json(),
+            commentsResponse.json()
+        ]);
+    })
+    .then(([user, posts, comments]) => {
+        console.log('All data loaded:', { user, posts, comments });
+    })
+    .catch((error) => {
+        console.error('One or more requests failed:', error);
+    });
+
+// Example 2: File uploads
+const uploadPromises = files.map(file => uploadFile(file));
+Promise.all(uploadPromises)
+    .then((uploadResults) => {
+        console.log('All files uploaded:', uploadResults);
+    })
+    .catch((error) => {
+        console.error('Upload failed:', error);
+    });
+
+9.How to handle a Promise race?
+Ans. Promise.race() returns the first promise to settle (resolve or reject).
+
+Promise.race() Use Cases:
+- Timeout implementation
+- First-to-complete scenarios
+- Performance optimization
+
+// Example 1: Timeout pattern
+const timeout = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Timeout')), 5000)
+);
+
+const fetchWithTimeout = (url) => {
+    return Promise.race([
+        fetch(url),
+        timeout
+    ]);
+};
+
+// Example 2: Multiple data sources
+const cachePromise = getFromCache(key);
+const apiPromise = fetchFromAPI(key);
+
+Promise.race([cachePromise, apiPromise])
+    .then((data) => {
+        console.log('Data from fastest source:', data);
+    })
+    .catch((error) => {
+        console.error('All sources failed:', error);
+    });
+
+// Example 3: Performance monitoring
+const fastServer = fetch('https://fast-server.com/data');
+const slowServer = fetch('https://slow-server.com/data');
+
+Promise.race([fastServer, slowServer])
+    .then((response) => {
+        console.log('Fastest server responded:', response.url);
+    });
+
+10.How to handle a Promise allSettled?
+Ans. Promise.allSettled() waits for all promises to settle (resolve or reject).
+
+Promise.allSettled() Benefits:
+- Never rejects
+- Returns status and value/reason for each promise
+- Useful when you need to know all outcomes
+
+// Example 1: Batch processing with partial failures
+const tasks = [
+    Promise.resolve('Task 1 completed'),
+    Promise.reject(new Error('Task 2 failed')),
+    Promise.resolve('Task 3 completed')
+];
+
+Promise.allSettled(tasks)
+    .then((results) => {
+        const successful = results.filter(r => r.status === 'fulfilled');
+        const failed = results.filter(r => r.status === 'rejected');
+        
+        console.log(`Completed: ${successful.length}, Failed: ${failed.length}`);
+        
+        results.forEach((result, index) => {
+            if (result.status === 'fulfilled') {
+                console.log(`Task ${index + 1}: Success - ${result.value}`);
+            } else {
+                console.log(`Task ${index + 1}: Failed - ${result.reason.message}`);
+            }
+        });
+    });
+
+// Example 2: Multiple API endpoints
+const endpoints = ['/api/users', '/api/posts', '/api/comments'];
+const requests = endpoints.map(endpoint => 
+    fetch(endpoint).then(res => res.json()).catch(err => ({ error: err.message }))
+);
+
+Promise.allSettled(requests)
+    .then((results) => {
+        const data = results.map(result => 
+            result.status === 'fulfilled' ? result.value : null
+        );
+        console.log('Available data:', data);
+    });
+
+11.How to handle a Promise any?
+Ans. Promise.any() returns the first promise to fulfill (resolve), ignoring rejections.
+
+Promise.any() Use Cases:
+- Fallback strategies
+- Multiple data sources
+- Redundancy patterns
+
+// Example 1: Multiple fallback servers
+const primaryServer = fetch('https://primary-server.com/data');
+const backupServer1 = fetch('https://backup1-server.com/data');
+const backupServer2 = fetch('https://backup2-server.com/data');
+
+Promise.any([primaryServer, backupServer1, backupServer2])
+    .then((response) => {
+        console.log('Data received from:', response.url);
+        return response.json();
+    })
+    .catch((error) => {
+        console.error('All servers failed:', error);
+    });
+
+// Example 2: Feature detection
+const modernAPI = new Promise((resolve) => {
+    if ('modernFeature' in window) {
+        resolve('Modern API available');
+    } else {
+        reject(new Error('Modern API not available'));
+    }
+});
+
+const polyfillAPI = new Promise((resolve) => {
+    resolve('Polyfill loaded');
+});
+
+Promise.any([modernAPI, polyfillAPI])
+    .then((result) => {
+        console.log('Using:', result);
+    });
+
+// Example 3: Multiple authentication methods
+const oauthPromise = authenticateWithOAuth();
+const tokenPromise = authenticateWithToken();
+const sessionPromise = authenticateWithSession();
+
+Promise.any([oauthPromise, tokenPromise, sessionPromise])
+    .then((authResult) => {
+        console.log('Authentication successful:', authResult.method);
+    })
+    .catch((error) => {
+        console.error('All authentication methods failed');
+    });
+
+12.How to handle a Promise chain?
+Ans. Promise chaining allows sequential processing of asynchronous operations.
+
+Promise Chaining Patterns:
+// 1. Sequential data processing
+fetch('/api/users')
+    .then(response => response.json())
+    .then(users => {
+        console.log('Users loaded:', users.length);
+        return users.filter(user => user.active);
+    })
+    .then(activeUsers => {
+        console.log('Active users:', activeUsers.length);
+        return activeUsers.map(user => user.id);
+    })
+    .then(userIds => {
+        return Promise.all(userIds.map(id => fetch(`/api/posts/${id}`)));
+    })
+    .then(responses => Promise.all(responses.map(res => res.json())))
+    .then(posts => {
+        console.log('All posts:', posts.flat());
+    })
+    .catch(error => {
+        console.error('Chain failed:', error);
+    });
+
+// 2. Conditional chaining
+fetch('/api/user/1')
+    .then(response => response.json())
+    .then(user => {
+        if (user.role === 'admin') {
+            return fetch('/api/admin/data');
+        } else {
+            return fetch('/api/user/data');
+        }
+    })
+    .then(response => response.json())
+    .then(data => console.log('Data:', data));
+
+// 3. Error recovery in chains
+fetch('/api/primary-data')
+    .then(response => response.json())
+    .catch(error => {
+        console.log('Primary failed, trying backup');
+        return fetch('/api/backup-data');
+    })
+    .then(response => response.json())
+    .then(data => console.log('Data received:', data));
+
+13.How to handle a Promise async/await?
+Ans. async/await provides syntactic sugar for Promise handling, making code more readable.
+
+async/await Patterns:
+// 1. Basic async/await
+async function fetchUserData(userId) {
+    try {
+        const response = await fetch(`/api/users/${userId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const user = await response.json();
+        console.log('User data:', user);
+        return user;
+    } catch (error) {
+        console.error('Failed to fetch user:', error);
+        throw error;
+    }
+}
+
+// 2. Parallel execution with async/await
+async function fetchAllData() {
+    try {
+        const [usersResponse, postsResponse, commentsResponse] = await Promise.all([
+            fetch('/api/users'),
+            fetch('/api/posts'),
+            fetch('/api/comments')
+        ]);
+
+        const [users, posts, comments] = await Promise.all([
+            usersResponse.json(),
+            postsResponse.json(),
+            commentsResponse.json()
+        ]);
+
+        return { users, posts, comments };
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
+}
+
+// 3. Sequential async operations
+async function processUserWorkflow(userId) {
+    try {
+        // Step 1: Get user
+        const user = await fetchUserData(userId);
+        
+        // Step 2: Get user's posts
+        const posts = await fetchUserPosts(userId);
+        
+        // Step 3: Process posts
+        const processedPosts = await processPosts(posts);
+        
+        // Step 4: Save results
+        await saveResults(userId, processedPosts);
+        
+        console.log('Workflow completed successfully');
+        return processedPosts;
+    } catch (error) {
+        console.error('Workflow failed:', error);
+        throw error;
+    }
+}
+
+// 4. Async/await with timeout
+async function fetchWithTimeout(url, timeout = 5000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    
+    try {
+        const response = await fetch(url, {
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        return response.json();
+    } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            throw new Error('Request timeout');
+        }
+        throw error;
+    }
+}
+
+14.How to handle a Promise fetch?
+Ans. The fetch API returns Promises and is the modern way to make HTTP requests.
+
+Fetch API Patterns:
+// 1. Basic GET request
+async function fetchData(url) {
+    try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Fetch failed:', error);
+        throw error;
+    }
+}
+
+// 2. POST request with JSON
+async function createPost(postData) {
+    try {
+        const response = await fetch('/api/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(postData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Create post failed:', error);
+        throw error;
+    }
+}
+
+// 3. File upload with FormData
+async function uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error('Upload failed');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('File upload failed:', error);
+        throw error;
+    }
+}
+
+// 4. Request with custom headers and options
+async function authenticatedRequest(url, options = {}) {
+    const defaultOptions = {
+        headers: {
+            'Authorization': `Bearer ${getToken()}`,
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include' // Include cookies
+    };
+    
+    const finalOptions = { ...defaultOptions, ...options };
+    
+    try {
+        const response = await fetch(url, finalOptions);
+        
+        if (response.status === 401) {
+            // Token expired, refresh and retry
+            await refreshToken();
+            return authenticatedRequest(url, options);
+        }
+        
+        if (!response.ok) {
+            throw new Error(`Request failed: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Authenticated request failed:', error);
+        throw error;
+    }
+}
+
+15.How to handle a Promise axios?
+Ans. Axios is a popular HTTP client that provides a Promise-based API.
+
+Axios Patterns:
+// 1. Basic GET request
+async function fetchDataWithAxios() {
+    try {
+        const response = await axios.get('/api/data');
+        console.log('Data:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Axios request failed:', error.response?.data || error.message);
+        throw error;
+    }
+}
+
+// 2. POST request with data
+async function createResource(data) {
+    try {
+        const response = await axios.post('/api/resources', data, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log('Resource created:', response.data);
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 409) {
+            console.error('Resource already exists');
+        } else {
+            console.error('Create failed:', error.response?.data);
+        }
+        throw error;
+    }
+}
+
+// 3. Axios interceptors for global handling
+axios.interceptors.request.use(
+    config => {
+        // Add auth token to all requests
+        config.headers.Authorization = `Bearer ${getToken()}`;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
+
+axios.interceptors.response.use(
+    response => response,
+    async error => {
+        if (error.response?.status === 401) {
+            // Token expired, refresh and retry
+            await refreshToken();
+            return axios.request(error.config);
+        }
+        return Promise.reject(error);
+    }
+);
+
+// 4. Axios with timeout and retry
+async function fetchWithRetry(url, maxRetries = 3) {
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            const response = await axios.get(url, {
+                timeout: 5000,
+                retry: i
+            });
+            return response.data;
+        } catch (error) {
+            if (i === maxRetries - 1) throw error;
+            console.log(`Retry ${i + 1}/${maxRetries}`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        }
+    }
+}
+
+16.How to handle a Promise XMLHttpRequest?
+Ans. XMLHttpRequest is the legacy way to make HTTP requests, but can be wrapped in Promises.
+
+XMLHttpRequest with Promises:
+// 1. Promise wrapper for XMLHttpRequest
+function makeXHRRequest(url, method = 'GET', data = null) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.open(method, url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    resolve(response);
+                } catch (error) {
+                    resolve(xhr.responseText);
+                }
+            } else {
+                reject(new Error(`HTTP ${xhr.status}: ${xhr.statusText}`));
+            }
+        };
+        
+        xhr.onerror = function() {
+            reject(new Error('Network error occurred'));
+        };
+        
+        xhr.ontimeout = function() {
+            reject(new Error('Request timeout'));
+        };
+        
+        xhr.timeout = 10000; // 10 seconds
+        
+        if (data) {
+            xhr.send(JSON.stringify(data));
+        } else {
+            xhr.send();
+        }
+    });
+}
+
+// 2. Usage example
+async function fetchDataWithXHR() {
+    try {
+        const data = await makeXHRRequest('/api/data');
+        console.log('XHR data:', data);
+        return data;
+    } catch (error) {
+        console.error('XHR request failed:', error);
+        throw error;
+    }
+}
+
+// 3. File upload with progress
+function uploadFileWithProgress(file, onProgress) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        xhr.upload.addEventListener('progress', (event) => {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                onProgress(percentComplete);
+            }
+        });
+        
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                resolve(JSON.parse(xhr.responseText));
+            } else {
+                reject(new Error(`Upload failed: ${xhr.status}`));
+            }
+        };
+        
+        xhr.onerror = function() {
+            reject(new Error('Upload failed'));
+        };
+        
+        xhr.open('POST', '/api/upload');
+        xhr.send(formData);
+    });
+}
+
+17.Create a example of Promise success and reject?
+Ans. Comprehensive examples showing Promise success and rejection scenarios.
+
+Real-world Promise Examples:
+// Example 1: User authentication
+function authenticateUser(credentials) {
+    return new Promise((resolve, reject) => {
+        // Simulate API call
+        setTimeout(() => {
+            if (credentials.username === 'admin' && credentials.password === 'password') {
+                resolve({
+                    id: 1,
+                    username: 'admin',
+                    role: 'administrator',
+                    token: 'jwt-token-123'
+                });
+            } else {
+                reject(new Error('Invalid credentials'));
+            }
+        }, 1000);
+    });
+}
+
+// Example 2: Data validation and processing
+function processUserData(userData) {
+    return new Promise((resolve, reject) => {
+        // Validate required fields
+        if (!userData.name || !userData.email) {
+            reject(new Error('Name and email are required'));
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userData.email)) {
+            reject(new Error('Invalid email format'));
+            return;
+        }
+        
+        // Process data
+        const processedData = {
+            ...userData,
+            id: Date.now(),
+            createdAt: new Date().toISOString(),
+            status: 'active'
+        };
+        
+        resolve(processedData);
+    });
+}
+
+// Example 3: File processing with progress
+function processFile(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            reject(new Error('No file provided'));
+            return;
+        }
+        
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+            reject(new Error('File too large'));
+            return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            try {
+                const content = event.target.result;
+                const processedContent = content.toUpperCase();
+                resolve({
+                    originalSize: file.size,
+                    processedContent,
+                    processingTime: Date.now()
+                });
+            } catch (error) {
+                reject(new Error('File processing failed'));
+            }
+        };
+        
+        reader.onerror = function() {
+            reject(new Error('Failed to read file'));
+        };
+        
+        reader.readAsText(file);
+    });
+}
+
+// Usage examples
+async function demonstratePromises() {
+    // Success case
+    try {
+        const user = await authenticateUser({
+            username: 'admin',
+            password: 'password'
+        });
+        console.log('Authentication successful:', user);
+    } catch (error) {
+        console.error('Authentication failed:', error.message);
+    }
+    
+    // Rejection case
+    try {
+        const user = await authenticateUser({
+            username: 'wrong',
+            password: 'wrong'
+        });
+    } catch (error) {
+        console.error('Authentication failed:', error.message);
+    }
+    
+    // Data processing
+    try {
+        const processedUser = await processUserData({
+            name: 'John Doe',
+            email: 'john@example.com'
+        });
+        console.log('User processed:', processedUser);
+    } catch (error) {
+        console.error('Processing failed:', error.message);
+    }
+}
+
+
+
+Q.18 How can you convert a callback-based function to a Promise-based function?
+Ans.
+
