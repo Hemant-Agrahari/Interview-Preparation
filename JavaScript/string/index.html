@@ -1,0 +1,176 @@
+1.What is String?
+Ans. String is a sequence of characters.
+
+2.How to create a String?
+Ans. We can create a String using the String constructor.
+const str = new String("Hello");
+
+3.How many ways to create a String?
+Ans. There are 3 ways to create a String.
+1. Using String constructor
+example:
+const str = new String("Hello");
+2. Using String literal
+example:
+const str2 = "Hello";
+3. Using String template
+example:
+const str3 = `Hello`;
+
+4.What is String literal?
+Ans. String literal is a sequence of characters enclosed in double quotes.
+
+5.What is String template?
+Ans. String template is a sequence of characters enclosed in backticks.
+
+6.What is String constructor?
+Ans. String constructor is a function that creates a new String object.
+
+7.List of string methods?
+Ans. There are 100+ string methods in JavaScript.
+1. length
+2. charAt
+3. charCodeAt
+4. concat
+5. indexOf
+6. lastIndexOf
+7. match
+8. replace
+9. search
+10. slice
+11. split
+12. substring
+13. toLowerCase
+14. toUpperCase
+15. trim
+16. trimStart
+17. trimEnd
+18. padStart
+19. padEnd
+20. repeat
+21. replaceAll
+22. includes
+23. startsWith
+24. endsWith
+25. toLocaleLowerCase
+26. toLocaleUpperCase
+
+8.What is String length?
+Ans. String length is the number of characters in a string.
+example:
+const str = "Hello";
+console.log(str.length); // 5
+
+9.What is String index?
+Ans. String index is the position of a character in a string.
+example:
+const str = "Hello";
+console.log(str[0]); // H
+
+10.What is String indexOf?
+Ans. String indexOf is the position of a character in a string.
+example:
+const str = "Hello";
+console.log(str.indexOf("l")); // 2
+console.log(str.indexOf("o")); // 4
+console.log(str.indexOf("z")); // -1
+
+11.What is String lastIndexOf?
+Ans. String lastIndexOf is the position of a character in a string.
+example:
+const str = "Hello";
+console.log(str.lastIndexOf("o")); // 4
+console.log(str.lastIndexOf("z")); // -1
+
+12.What is String match?
+Ans. String match is a method that searches a string for a match against a regular expression and returns the matches as an array or null.
+example:
+const str = "Hello";
+console.log(str.match("l")); // l
+console.log(str.match("z")); // null
+console.log(str.match(/l/g)); // [l, l]
+console.log(str.match(/z/g)); // null
+
+13.What is String replace?
+Ans. String replace is a method that replaces a specified value with another value in a string.
+example:
+const str = "Hello";
+console.log(str.replace("l", "z")); // Hezzo
+
+14.What is String split?
+Ans. String split is a method that splits a string into an array of substrings based on a specified delimiter.
+if we want to split a string into an array of characters, we can use the split method.
+example:
+const str = "Hello World";
+console.log(str.split("")); // [H, e, l, l, o]
+if we want to split a string into an array of words, we can use the split method.
+example:
+const str = "Hello World";
+console.log(str.split(" ")); // [Hello, World]
+
+if we want to split a string into an array of sentences, we can use the split method.
+example:
+const str = "Hello World";
+console.log(str.split(".")); // [Hello World]
+
+if we want to split a string into an array of lines, we can use the split method.
+example:
+const str = "Hello World";
+console.log(str.split("  ")); // [Hello World]
+
+
+
+
+
+15.What is String substring?
+Ans. String substring is a method that extracts characters from a string between two specified indices.
+example:
+const str = "Hello World";
+console.log(str.substring(0, 5)); // Hello
+
+16.What is the different between slice and split?
+Ans. Slice is a method that extracts a section of a string and returns it as a new string, without modifying the original string.
+example:
+const str = "Hello World";
+console.log(str.slice(0, 5)); // Hello
+console.log(str); // Hello World
+split is a method that splits a string into an array of substrings based on a specified delimiter.
+example:
+const str = "Hello World";
+console.log(str.split(" ")); // [Hello, World]
+
+17.What is the different between substring and slice?
+Ans. Substring is a method that extracts characters from a string between two specified indices.
+example:
+const str = "Hello World";
+console.log(str.substring(0, 5)); // Hello
+console.log(str); // Hello World
+
+18.Write a program to reverse a string?
+Ans. const str = "Hello World";
+const reversedStr = str.split("")
+console.log(reversedStr); // [H, e, l, l, o,  , W, o, r, l, d]
+const reversedStr2 = reversedStr.reverse();
+console.log(reversedStr2); // [d, l, r, o, W,  , o, l, l, e, H]
+const reversedStr3 = reversedStr2.join("");
+console.log(reversedStr3); // dlroW olleH
+
+19.Write a program to check if a string is a palindrome?
+Ans. const str = "Hello World";
+const reversedStr = str.split("").reverse().join("");
+console.log(reversedStr); // dlroW olleH
+if (str === reversedStr) {
+    console.log("The string is a palindrome");
+} else {
+    console.log("The string is not a palindrome");
+}
+
+
+20.Write a program to reverse a sentence?
+input: "Hello World"
+output: "olleh dlrow"
+Ans. const str = "Hello World";
+const reversedSentence = str.split(" ").map(word => word.split("").reverse().join("")).join(" ");
+console.log(reversedSentence); // olleh dlrow
+
+
