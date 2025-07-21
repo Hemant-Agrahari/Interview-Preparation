@@ -1,0 +1,157 @@
+1.What is JavaScript?
+Ans.
+1.Client-Side Scripting Language
+JavaScript primarily runs in the browser and allows web pages to become interactive (e.g., dropdowns, modals, animations).
+
+2.Dynamically Typed
+Variables in JavaScript do not need a type declaration; the type is determined at runtime.
+
+3.Supports Object-Oriented, Functional, and Event-Driven Programming
+JavaScript is a multi-paradigm language that supports various programming styles.
+
+4.Runs in the Browser and on the Server
+Originally for browsers, JavaScript can now run on the server using environments like Node.js.
+
+5.Uses the DOM (Document Object Model)
+JavaScript interacts with HTML and CSS through the DOM, allowing dynamic content updates.
+
+6.Asynchronous Programming with Promises and async/await
+JavaScript supports asynchronous operations, useful for APIs and non-blocking code execution.
+
+7.Single-threaded with Event Loop
+JavaScript is single-threaded but uses an event loop to handle asynchronous operations efficiently.
+
+8.Interpreted, Not Compiled
+JavaScript code is interpreted line-by-line by the browser, making it easy to debug and test.
+
+9.Large Ecosystem and Community
+JavaScript has vast libraries (like React, jQuery) and frameworks (like Angular, Vue.js), making development faster.
+
+10.Used for Full-Stack Development
+JavaScript is used in both frontend (React, Vue) and backend (Node.js), enabling full-stack web development.
+
+
+2.What is the difference between let, var and const?
+Ans.
+var:var is a global scope variable.
+let:let is a block scope variable.
+const:const is a block scope variable.
+
+3.What is hoisting in JavaScript?
+Ans.Hoisting is a JavaScript mechanism where variables and function declarations are moved to the top of their scope before code execution.
+example:
+console.log(a); //undefined
+var a = 10;
+console.log(a); //10
+
+
+4.What is the difference between == and ===?
+Ans.== is used to compare the value of two variables, while === is used to compare the value and type of two variables.
+example:
+console.log(1 == "1"); //true
+console.log(1 === "1"); //false
+
+
+5.What is the difference between null and undefined?
+Ans.null is an assignment value that represents no value, while undefined is a default value that is assigned to a variable that is not yet defined.
+example:
+console.log(null == undefined); //true
+console.log(null === undefined); //false
+
+6.What is the pure function and impure function?
+Ans.A pure function is a function that always returns the same output for the same input, and does not have any side effects.
+example:
+function add(a, b) {
+    return a + b;
+}
+console.log(add(1, 2)); //3
+
+7.How many way we have to handle async operation in javascript?
+Ans.There are 3 way to handle async operation in javascript:
+1.Callback
+2.Promise
+3.Async/Await
+
+which one is best and why?
+Ans.Async/Await is the best way to handle async operation in javascript because it is easy to read and write.
+example:
+async function add(a, b) {
+    return a + b;
+}
+console.log(add(1, 2)); //3
+
+8.What is Higher Order Function in JavaScript?
+Ans.A higher order function is a function that takes a function as an argument or returns a function.
+example:
+function add(a, b) {
+    return a + b;
+}
+console.log(add(1, 2)); //3
+
+example:
+map, filter, reduce, forEach, etc.
+
+9.what is the difference between map and forEach?
+Ans.map is used to create a new array by applying a function to each element of the array, while forEach is used to iterate over the array and perform an action on each element.
+means map return a new array and forEach return undefined.
+example:
+console.log(arr.map(x => x * 2)); //[2, 4, 6]
+console.log(arr.forEach(x => x * 2)); //undefined
+
+10.What is the difference between synchronous and asynchronous?
+Ans.Synchronous is a programming paradigm that executes code in a sequential manner, while asynchronous is a programming paradigm that executes code in a non-sequential manner.
+example:
+console.log("Hello");
+console.log("World");
+
+11.what is the difference between filter and find method?
+Ans.filter is used to filter the array and return a new array, while find is used to find the first element that matches the condition.
+example:
+console.log(arr.filter(x => x > 2)); //[3, 4, 5]
+console.log(arr.find(x => x > 2)); //3
+
+12.What is event loop in javascript?
+Ans.Event loop is a loop that checks the call stack for function calls and executes them.
+
+13.What is the difference between call, apply and bind method?
+Ans.call, apply and bind are used to call a function with a different this value.
+call method:call is used to call a function with a different this value.
+apply:apply is used to call a function with a different this value and arguments.
+bind:bind is used to call a function with a different this value and arguments.
+example:
+console.log(arr.call(x => x > 2)); //[3, 4, 5]
+console.log(arr.apply(x => x > 2)); //3
+console.log(arr.bind(x => x > 2)); //3
+
+14.Give me 5 difference between normal function and arrow function?
+Ans.
+1.
+
+15.Can we use this keyword in arrow function?
+
+16.What is the difference between function expression and function declaration?
+Ans.Function expression is a function that is stored in a variable.
+Function declaration is a function that is declared with the function keyword.
+
+17.What is the difference between first class function and higher order function?
+Ans.First class function is a function that is treated as a variable.
+Higher order function is a function that takes a function as an argument or returns a function.
+
+18.var a = 10;
+{
+    var a = 20;
+}
+let b = a;
+{
+    let b = 30;
+}
+console.log(a); //10
+console.log(b); //30
+
+explation:
+
+
+
+
+
+
